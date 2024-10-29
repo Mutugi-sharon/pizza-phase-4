@@ -17,8 +17,9 @@ function PizzaForm({ restaurantId, onAddPizza }) {
     const formData = {
       pizza_id: pizzaId,
       restaurant_id: restaurantId,
-      price,
+      price: parseFloat(price),
     };
+
     fetch("/restaurant_pizzas", {
       method: "POST",
       headers: {
@@ -30,6 +31,8 @@ function PizzaForm({ restaurantId, onAddPizza }) {
         r.json().then((newPizzaRestaurant) => {
           onAddPizza(newPizzaRestaurant);
           setFormErrors([]);
+          setPizzaId("");
+          setPrice("");
         });
       } else {
         r.json().then((err) => setFormErrors(err.errors));
@@ -53,21 +56,22 @@ function PizzaForm({ restaurantId, onAddPizza }) {
           </option>
         ))}
       </select>
-      <label htmlFor="pizza_id">Price:</label>
+      <label htmlFor="price">Price:</label>
       <input
         id="price"
         name="price"
         type="number"
+        min="1"
+        max="30"
         value={price}
-        onChange={(e) => setPrice(parseInt(e.target.value))}
+        onChange={(e) => setPrice(e.target.value)}
       />
-      {formErrors.length > 0
-        ? formErrors.map((err) => (
-            <p key={err} style={{ color: "red" }}>
-              {err}
-            </p>
-          ))
-        : null}
+      {formErrors.length > 0 &&
+        formErrors.map((err) => (
+          <p key={err} style={{ color: "red" }}>
+            {err}
+          </p>
+        ))}
       <button type="submit">Add To Restaurant</button>
     </form>
   );

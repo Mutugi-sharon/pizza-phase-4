@@ -25,17 +25,17 @@ function Home() {
   }, [id]);
 
   function handleAddPizza(newRestaurantPizza) {
-    setRestaurant({
+    setRestaurant((prev) => ({
       data: {
-        ...restaurant,
+        ...prev.data,
         restaurant_pizzas: [
-          ...restaurant.restaurant_pizzas,
+          ...(prev.data.restaurant_pizzas || []),
           newRestaurantPizza,
         ],
       },
       error: null,
       status: "resolved",
-    });
+    }));
   }
 
   if (status === "pending") return <h1>Loading...</h1>;
@@ -49,17 +49,22 @@ function Home() {
       </div>
       <div className="card">
         <h2>Pizza Menu</h2>
-        {restaurant.restaurant_pizzas.map((restaurant_pizza) => (
-          <div key={restaurant_pizza.pizza.id}>
-            <h3>{restaurant_pizza.pizza.name}</h3>
-            <p>
-              <em>{restaurant_pizza.pizza.ingredients}</em>
-            </p>
-            <p>
-              <em>Price ${restaurant_pizza.price}</em>
-            </p>
-          </div>
-        ))}
+        {restaurant.restaurant_pizzas &&
+        restaurant.restaurant_pizzas.length > 0 ? (
+          restaurant.restaurant_pizzas.map((restaurant_pizza) => (
+            <div key={restaurant_pizza.id}>
+              <h3>{restaurant_pizza.pizza.name}</h3>
+              <p>
+                <em>{restaurant_pizza.pizza.ingredients}</em>
+              </p>
+              <p>
+                <em>Price ${restaurant_pizza.price}</em>
+              </p>
+            </div>
+          ))
+        ) : (
+          <p>No pizzas available.</p>
+        )}
       </div>
       <div className="card">
         <h3>Add New Pizza</h3>
